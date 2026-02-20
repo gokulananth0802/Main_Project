@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>3D Model Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #1a1a2e;
+    }
+    model-viewer {
+      width: 100%;
+      height: 100%;
+      --poster-color: transparent;
+    }
+    /* Loading indicator */
+    model-viewer::part(default-progress-bar) {
+      display: none;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #e0e0e0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      text-align: center;
+    }
+    #loading .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      border-top-color: #6c63ff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="loading">
+    <div class="spinner"></div>
+    Loading 3D Model...
+  </div>
+
+  <model-viewer
+    id="viewer"
+    src="human_3d_model.glb"
+    alt="3D Human Model"
+    auto-rotate
+    auto-rotate-delay="0"
+    rotation-per-second="15deg"
+    camera-controls
+    touch-action="pan-y"
+    interaction-prompt="none"
+    shadow-intensity="0.5"
+    environment-image="neutral"
+    style="display: none;"
+  ></model-viewer>
+
+  <script src="model-viewer.min.js"></script>
+  <script>
+    const viewer = document.getElementById('viewer');
+    const loading = document.getElementById('loading');
+
+    viewer.addEventListener('load', () => {
+      loading.style.display = 'none';
+      viewer.style.display = 'block';
+    });
+
+    viewer.addEventListener('error', (e) => {
+      loading.innerHTML = 'Failed to load model.<br><small>' + (e.detail || '') + '</small>';
+    });
+
+    // Show viewer after a short delay even if load event doesn't fire
+    setTimeout(() => {
+      if (loading.style.display !== 'none') {
+        loading.style.display = 'none';
+        viewer.style.display = 'block';
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
